@@ -1027,7 +1027,7 @@
             let result = mode === "signup"
                 ? await client.auth.signUp({ ...credentials, options: {
                         data: { display_name: authName.value.trim() },
-                        emailRedirectTo: location.origin + "/"
+                        emailRedirectTo: new URL("./", location.origin + location.pathname).href
                     } })
                 : await client.auth.signInWithPassword(credentials);
             if (mode === 'signup' && !result.error && !result.data?.session) {
@@ -1191,6 +1191,12 @@
             reportRows.unshift(saved); return saved?.results?.data ?? null; },
         plans: () => reportRows.filter(r => r.results?.kind === 'gemini_plan'),
         async request(kind, payload) {
+            const configuredEndpoint = environment.IDEAFORGE_AI?.endpoint?.trim();
+            if (!configuredEndpoint && location.hostname?.endsWith('.github.io'))
+                throw new Error('خدمة الذكاء الاصطناعي غير مربوطة بهذه النسخة بعد. يلزم ربط خادم الخدمة من إعدادات الموقع.');
+            const endpoint = new URL(configuredEndpoint || '/api/ai', location.origin + location.pathname);
+            if (endpoint.protocol !== 'https:' && endpoint.origin !== location.origin)
+                throw new Error('عنوان خدمة الذكاء غير صالح.');
             if (!client)
                 throw new Error('خدمة الحساب غير متاحة.');
             const current = await client.auth.getSession();
@@ -1200,10 +1206,18 @@
                 throw new Error('سجّل الدخول لاستخدام الذكاء الاصطناعي.');
             }
             const owner = credential.user.id, version = identityVersion;
-            const response = await fetch('/api/ai', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + credential.access_token }, body: JSON.stringify({ kind, payload }) });
+            const response = await fetch(endpoint.href, { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + credential.access_token }, body: JSON.stringify({ kind, payload }) });
             if (!isCurrent(owner, version))
                 throw new Error('تغيّر الحساب. أعد المحاولة.');
-            const result = await response.json();
+            if (response.status === 404 || !response.headers.get('content-type')?.includes('application/json'))
+                throw new Error('تعذر الوصول إلى خدمة الذكاء الاصطناعي. راجع ربط خادم الخدمة من إعدادات الموقع.');
+            let result;
+            try {
+                result = await response.json();
+            }
+            catch {
+                throw new Error('وصل رد غير مكتمل من خدمة الذكاء. حاول مرة أخرى لاحقًا.');
+            }
             const errors = { no_unique_ideas: 'لم تتوفر ثلاث أفكار مختلفة هذه المرة. غيّر المهارات أو الهدف وحاول مجددًا.', ideas_history_unavailable: 'تعذر التحقق من سجل الأفكار؛ لم نعرض أفكارًا قد تتكرر. أعد المحاولة لاحقًا.', provider_key_rejected: 'تعذر اعتماد مفتاح المزوّد. راجع إعداد الربط مع مسؤول الموقع.', ai_not_configured: 'خدمة المساعد تنتظر إضافة المفتاح السري من مالك الموقع.', sign_in_required: 'انتهت الجلسة. سجّل الدخول مجددًا.', provider_busy: 'خدمة المساعد مشغولة مؤقتًا بعد إعادة المحاولة. جرّب مرة أخرى لاحقًا.', provider_limit: 'وصلت الخدمة إلى حد الاستخدام. حاول لاحقًا.', rate_limited: 'محاولات كثيرة خلال دقيقة. انتظر قليلًا.', code_limit: 'أدخل محتوى لا يتجاوز واحد ميجابايت.', incomplete_response: 'لم تكتمل الإجابة. جرّب ملفًا أصغر أو طلبًا أدق.', timeout: 'استغرق الطلب وقتًا طويلًا. حاول مجددًا.' };
             if (!response.ok || !result.data) {
                 const failure = new Error(errors[result.error ?? ''] ?? 'لم تكتمل استجابة المساعد. تحقق من الاتصال أو حاول لاحقًا.');

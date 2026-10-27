@@ -280,6 +280,7 @@ interface AppClient {
 }
 const environment = window as unknown as {
     IDEAFORGE_SUPABASE?: { url: string; publishableKey: string };
+    IDEAFORGE_AI?: { endpoint?: string };
     supabase?: { createClient(url: string, key: string, options: object): AppClient };
 };
 const element = <T extends HTMLElement>(id: string): T => {
@@ -857,7 +858,7 @@ authForm.addEventListener("submit", async event => {
         let result = mode === "signup"
             ? await client.auth.signUp({ ...credentials, options: {
                 data: { display_name: authName.value.trim() },
-                emailRedirectTo: location.origin + "/"
+                emailRedirectTo: new URL("./", location.origin + location.pathname).href
             } })
             : await client.auth.signInWithPassword(credentials);
         if(mode==='signup'&&!result.error&&!result.data?.session){result=await client.auth.signInWithPassword(credentials);}
@@ -977,13 +978,18 @@ updatePrivateControls();
  async loadPlan(id:string){const owner=session?.user.id,version=identityVersion;if(!owner)return null;const result=await db().from('code_reports').select('*').eq('owner_id',owner).eq('project_id',id).eq('results->>kind','gemini_plan').order('created_at',{ascending:false}).range(0,0);if(!isCurrent(owner,version)||activeProjectId!==id)return null;if(result.error)throw new Error(errorText(result.error));const saved=result.data?.[0] as (CodeReport&{results?:{data?:ExecutionPlan}})|undefined;if(saved&&!reportRows.some(r=>r.id===saved.id))reportRows.unshift(saved);return saved?.results?.data??null;},
  plans:()=>reportRows.filter(r=>(r as CodeReport & {results?:{kind?:string}}).results?.kind==='gemini_plan'),
  async request(kind:string,payload:unknown){
+  const configuredEndpoint=environment.IDEAFORGE_AI?.endpoint?.trim();
+  if(!configuredEndpoint&&location.hostname?.endsWith('.github.io'))throw new Error('خدمة الذكاء الاصطناعي غير مربوطة بهذه النسخة بعد. يلزم ربط خادم الخدمة من إعدادات الموقع.');
+  const endpoint=new URL(configuredEndpoint||'/api/ai',location.origin+location.pathname);
+  if(endpoint.protocol!=='https:'&&endpoint.origin!==location.origin)throw new Error('عنوان خدمة الذكاء غير صالح.');
   if(!client)throw new Error('خدمة الحساب غير متاحة.');
   const current=await client.auth.getSession();const credential=current.data?.session;
   if(!credential?.access_token){showAuth();throw new Error('سجّل الدخول لاستخدام الذكاء الاصطناعي.');}
   const owner=credential.user.id,version=identityVersion;
-  const response=await fetch('/api/ai',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+credential.access_token},body:JSON.stringify({kind,payload})});
+  const response=await fetch(endpoint.href,{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+credential.access_token},body:JSON.stringify({kind,payload})});
   if(!isCurrent(owner,version))throw new Error('تغيّر الحساب. أعد المحاولة.');
-  const result=await response.json() as {data?:unknown;error?:string};
+  if(response.status===404||!response.headers.get('content-type')?.includes('application/json'))throw new Error('تعذر الوصول إلى خدمة الذكاء الاصطناعي. راجع ربط خادم الخدمة من إعدادات الموقع.');
+  let result:{data?:unknown;error?:string};try{result=await response.json();}catch{throw new Error('وصل رد غير مكتمل من خدمة الذكاء. حاول مرة أخرى لاحقًا.');}
   const errors:Record<string,string>={no_unique_ideas:'لم تتوفر ثلاث أفكار مختلفة هذه المرة. غيّر المهارات أو الهدف وحاول مجددًا.',ideas_history_unavailable:'تعذر التحقق من سجل الأفكار؛ لم نعرض أفكارًا قد تتكرر. أعد المحاولة لاحقًا.',provider_key_rejected:'تعذر اعتماد مفتاح المزوّد. راجع إعداد الربط مع مسؤول الموقع.',ai_not_configured:'خدمة المساعد تنتظر إضافة المفتاح السري من مالك الموقع.',sign_in_required:'انتهت الجلسة. سجّل الدخول مجددًا.',provider_busy:'خدمة المساعد مشغولة مؤقتًا بعد إعادة المحاولة. جرّب مرة أخرى لاحقًا.',provider_limit:'وصلت الخدمة إلى حد الاستخدام. حاول لاحقًا.',rate_limited:'محاولات كثيرة خلال دقيقة. انتظر قليلًا.',code_limit:'أدخل محتوى لا يتجاوز واحد ميجابايت.',incomplete_response:'لم تكتمل الإجابة. جرّب ملفًا أصغر أو طلبًا أدق.',timeout:'استغرق الطلب وقتًا طويلًا. حاول مجددًا.'};
   if(!response.ok||!result.data){const failure=new Error(errors[result.error??'']??'لم تكتمل استجابة المساعد. تحقق من الاتصال أو حاول لاحقًا.') as Error&{code?:string;retryAfterSeconds?:number};if(result.error==='provider_limit'){const scope=(result as {quotaScope?:string}).quotaScope;failure.message=scope==='daily'?'نفدت الحصة اليومية لدى مزوّد الذكاء الاصطناعي. الانتظار دقيقة لن يجدّدها.':scope==='minute'?'وصل المزوّد إلى حد الطلبات أو النصوص بالدقيقة. انتظر قليلًا ثم حاول.':'وصل مزوّد الذكاء الاصطناعي إلى حد الاستخدام. راجع الحصة في حساب المزوّد.';}failure.code=result.error;failure.retryAfterSeconds=(result as {retryAfterSeconds?:number}).retryAfterSeconds;throw failure;}
   return result.data;

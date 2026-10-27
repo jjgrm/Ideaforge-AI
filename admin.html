@@ -3,16 +3,16 @@
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>إدارة IdeaForge</title><link rel="stylesheet" href="admin.css"></head>
 <body>
 <section id="admin-gate" class="gate">
-    <a class="brand" href="/"><img src="images/ideaforge-logo.png" alt="شعار IdeaForge"><span dir="ltr">IdeaForge <b>AI</b></span></a>
+    <a class="brand" href="./"><img src="images/ideaforge-logo.png" alt="شعار IdeaForge"><span dir="ltr">IdeaForge <b>AI</b></span></a>
     <p class="eyebrow">مساحة الإدارة</p><h1>مرحبًا بعودتك.</h1>
     <p class="muted">ادخل من نموذج الموقع المعتاد ببيانات الإدارة. إنشاء المعاونين متاح للمالك من داخل اللوحة.</p>
     <p id="gate-status" role="status" aria-live="polite">جارٍ التحقق من الجلسة…</p>
-    <a class="back-link" href="/">تسجيل الدخول من الموقع ↗</a>
+    <a class="back-link" href="./">تسجيل الدخول من الموقع ↗</a>
 </section>
 
 <div id="admin-shell" hidden>
     <aside class="sidebar">
-        <a class="brand" href="/"><img src="images/ideaforge-logo.png" alt=""><span dir="ltr">IdeaForge <b>AI</b><small>لوحة الإدارة</small></span></a>
+        <a class="brand" href="./"><img src="images/ideaforge-logo.png" alt=""><span dir="ltr">IdeaForge <b>AI</b><small>لوحة الإدارة</small></span></a>
         <nav aria-label="أقسام الإدارة">
             <button type="button" data-panel="overview" class="active">◈ نظرة عامة</button>
             <button type="button" data-panel="users" data-permission="users">◉ المستخدمون</button>
@@ -23,7 +23,7 @@
             <button type="button" data-panel="admins" id="admins-nav" hidden>♙ المشرفون والصلاحيات</button>
             <button type="button" data-panel="account">◎ حسابي</button>
         </nav>
-        <div class="sidebar-bottom"><a href="/">عرض الموقع ↗</a><button type="button" id="admin-logout">تسجيل خروج الإدارة</button></div>
+        <div class="sidebar-bottom"><a href="./">عرض الموقع ↗</a><button type="button" id="admin-logout">تسجيل خروج الإدارة</button></div>
     </aside>
     <div class="main-shell">
         <header class="topbar"><div><strong id="admin-label"></strong><small id="admin-role"></small></div><div class="top-actions"><div class="admin-theme" role="group" aria-label="لون الواجهة"><button type="button" id="admin-light" aria-label="الوضع الفاتح">☀</button><button type="button" id="admin-dark" aria-label="الوضع الداكن">☾</button></div><label id="period-label">الفترة<select id="admin-period"><option value="7" selected>7 أيام</option><option value="30">30 يومًا</option><option value="90">90 يومًا</option></select></label><button type="button" id="admin-refresh">تحديث ↻</button></div></header>
