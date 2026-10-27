@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>إدارة IdeaForge</title><link rel="stylesheet" href="admin.css"></head>
+<body>
+<section id="admin-gate" class="gate">
+    <a class="brand" href="/"><img src="images/ideaforge-logo.png" alt="شعار IdeaForge"><span dir="ltr">IdeaForge <b>AI</b></span></a>
+    <p class="eyebrow">مساحة الإدارة</p><h1>مرحبًا بعودتك.</h1>
+    <p class="muted">ادخل من نموذج الموقع المعتاد ببيانات الإدارة. إنشاء المعاونين متاح للمالك من داخل اللوحة.</p>
+    <p id="gate-status" role="status" aria-live="polite">جارٍ التحقق من الجلسة…</p>
+    <a class="back-link" href="/">تسجيل الدخول من الموقع ↗</a>
+</section>
+
+<div id="admin-shell" hidden>
+    <aside class="sidebar">
+        <a class="brand" href="/"><img src="images/ideaforge-logo.png" alt=""><span dir="ltr">IdeaForge <b>AI</b><small>لوحة الإدارة</small></span></a>
+        <nav aria-label="أقسام الإدارة">
+            <button type="button" data-panel="overview" class="active">◈ نظرة عامة</button>
+            <button type="button" data-panel="users" data-permission="users">◉ المستخدمون</button>
+            <button type="button" data-panel="projects" data-permission="projects">▤ المشاريع والتقدم</button>
+            <button type="button" data-panel="reports" data-permission="reports">⌘ تقارير التطوير</button>
+            <button type="button" data-panel="content" data-permission="content">✧ محتوى الموقع</button>
+            <button type="button" data-panel="activity" data-permission="activity">◷ سجل الإدارة</button>
+            <button type="button" data-panel="admins" id="admins-nav" hidden>♙ المشرفون والصلاحيات</button>
+            <button type="button" data-panel="account">◎ حسابي</button>
+        </nav>
+        <div class="sidebar-bottom"><a href="/">عرض الموقع ↗</a><button type="button" id="admin-logout">تسجيل خروج الإدارة</button></div>
+    </aside>
+    <div class="main-shell">
+        <header class="topbar"><div><strong id="admin-label"></strong><small id="admin-role"></small></div><div class="top-actions"><div class="admin-theme" role="group" aria-label="لون الواجهة"><button type="button" id="admin-light" aria-label="الوضع الفاتح">☀</button><button type="button" id="admin-dark" aria-label="الوضع الداكن">☾</button></div><label id="period-label">الفترة<select id="admin-period"><option value="7" selected>7 أيام</option><option value="30">30 يومًا</option><option value="90">90 يومًا</option></select></label><button type="button" id="admin-refresh">تحديث ↻</button></div></header>
+        <main>
+            <div class="page-heading"><div><p class="eyebrow">IDEA → BUILD → GROW</p><h1 id="panel-title">نظرة عامة</h1></div><span id="admin-updated" class="muted"></span></div>
+            <p id="admin-status" role="status" aria-live="polite"></p>
+            <section id="panel-overview" class="panel">
+                <div id="overview-limited" class="card" hidden>مرحبًا بك. اختر أحد الأقسام المتاحة لك من القائمة. لا تملك هذه الجلسة صلاحية الإحصائيات.</div>
+                <div id="analytics-content">
+                    <div id="metric-cards" class="metrics"></div>
+                    <div class="dashboard-grid"><article class="card chart-card"><h2>زيارات الموقع المسجلة</h2><p class="muted">تبدأ البيانات من تفعيل القياس. أعداد الزوار تقريبية ولا تشمل من يمنع القياس.</p><div id="visits-chart"></div></article><article class="card"><h2>ماذا يختار الزوار؟</h2><div id="interests-list"></div></article></div>
+                    <div class="dashboard-grid"><article class="card"><h2>الدخول والحسابات</h2><div id="access-stats"></div></article><article class="card"><h2>نشاط الآن</h2><div id="live-stats"></div><p class="muted">زوار مرصودون خلال آخر خمس دقائق، ويتحدث العدد عند التحديث.</p></article></div>
+                </div>
+            </section>
+            <section id="panel-users" class="panel" hidden><article class="card"><h2>الحسابات المسجلة</h2><p class="muted">آخر 100 حساب. تظهر حالة التأكيد وآخر دخول، ولا تُعرض كلمات المرور.</p><div id="users-table" class="table-wrap"></div></article></section>
+            <section id="panel-projects" class="panel" hidden><article class="card"><h2>المشاريع وخطط البداية</h2><p class="muted">آخر 100 مشروع مع التقدم المحفوظ.</p><div id="projects-table" class="table-wrap"></div></article></section>
+            <section id="panel-reports" class="panel" hidden><article class="card"><h2>تقارير تطوير الكود</h2><p class="muted">آخر 100 تقرير، مع الطلب والمشروع المرتبط.</p><div id="reports-table" class="table-wrap"></div></article></section>
+            <section id="panel-content" class="panel" hidden><div class="dashboard-grid"><article class="card"><h2>منشورات مشرفين الموقع</h2><p class="muted">المنشور يظهر في قسم «مشرفين الموقع» على الصفحة الرئيسية.</p><form id="update-form" class="form"><input id="update-id" type="hidden"><label>العنوان<input id="update-title" maxlength="160" required></label><label>المحتوى<textarea id="update-body" rows="7" maxlength="10000" required></textarea></label><div class="form-actions"><button class="primary" type="submit" id="publish-update">منشور جديد</button></div></form></article><article class="card"><h2>المنشورات والمسودات</h2><div id="updates-list"></div></article></div></section>
+            <section id="panel-activity" class="panel" hidden><article class="card"><h2>سجل العمليات الإدارية</h2><div id="activity-table" class="table-wrap"></div></article></section>
+            <section id="panel-admins" class="panel" hidden><div class="dashboard-grid"><article class="card"><h2>إضافة مشرف معاون</h2><p class="muted">أنت تحدد بيانات دخول المعاون والأقسام المسموحة له. أرسل بياناته إليه بنفسك بطريقة خاصة وآمنة.</p><form id="new-admin-form" class="form"><label>البريد<input id="new-admin-email" type="email" dir="ltr" required maxlength="254"></label><label>اسم الدخول<input id="new-admin-username" autocomplete="off" dir="ltr" required maxlength="80"></label><label>كلمة مرور المعاون<input id="new-admin-password" type="password" autocomplete="new-password" minlength="8" maxlength="72" required></label><fieldset><legend>الأقسام المسموحة</legend><div id="new-admin-permissions" class="permission-grid"></div></fieldset><button class="primary" type="submit">إضافة المعاون</button></form></article><article class="card"><h2>فريق الإدارة</h2><p class="muted">صلاحيات المعاون تُفحص في الخادم. تعطيل الحساب يمنع جلساته الحالية أيضًا.</p><div id="admins-list"></div></article></div></section>
+            <section id="panel-account" class="panel" hidden><article class="card"><h2>جلسة الإدارة الحالية</h2><div id="account-details"></div><p class="muted">صلاحيات المالك مرتبطة بحسابه العادي. الجلسة تنتهي بعد ساعة أو عند تسجيل الخروج، ولا تُحفظ كلمة المرور في المتصفح.</p></article></section>
+        </main>
+    </div>
+</div>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.78.0/dist/umd/supabase.js"></script><script defer src="supabase-config.js"></script><script defer src="admin.js"></script>
+</body></html>
+
+

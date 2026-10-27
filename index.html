@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- اسم الصفحة الظاهر في تبويب المتصفح -->
+    <title>IdeaForge AI — من فكرة إلى إنجاز</title>
+
+    <link rel="stylesheet" href="ps.css">
+</head>
+
+<body>
+
+    
+
+<div class="top-tools">
+<div class="theme-switch" role="group" aria-label="لون الواجهة">
+    <button
+        type="button"
+        id="light-mode"
+        aria-label="الوضع الفاتح"
+    >
+        <img
+            src="images/sun.svg"
+            alt=""
+            width="20"
+            height="20"
+        >
+    </button>
+
+    <button
+        type="button"
+        id="dark-mode"
+        aria-label="الوضع الداكن"
+    >
+        <img
+            src="images/moon.svg"
+            alt=""
+            width="20"
+            height="20"
+        >
+    </button>
+</div>
+</div>
+    
+<header class="site-header">
+    <a class="site-brand" href="#" aria-label="IdeaForge AI الرئيسية">
+        <img class="brand-logo" src="images/ideaforge-logo.png" alt="شعار IdeaForge">
+        <span dir="ltr">IdeaForge <span class="brand-ai">AI</span></span>
+    </a>
+
+</header>
+<section id="site-updates" class="site-updates" hidden aria-labelledby="updates-title">
+    <h2 id="updates-title">مشرفين الموقع</h2>
+    <div id="site-updates-list"></div>
+</section>
+
+<p id="account-status" class="account-status" role="status" aria-live="polite"></p>
+<dialog id="auth-dialog" aria-labelledby="auth-title" dir="rtl">
+    <button type="button" id="close-auth" class="dialog-close" aria-label="إغلاق نافذة الحساب">×</button>
+    <h2 id="auth-title">تسجيل الدخول</h2>
+    <div id="auth-modes" class="auth-modes" role="group" aria-label="نوع العملية">
+        <button type="button" id="auth-login" aria-pressed="true">لدي حساب</button>
+        <button type="button" id="auth-signup" aria-pressed="false">إنشاء حساب</button>
+    </div>
+    <form id="auth-form">
+        <div class="form-field" id="auth-name-field" hidden>
+            <label for="auth-name">الاسم الظاهر</label>
+            <input id="auth-name" name="display-name" autocomplete="nickname" maxlength="100">
+        </div>
+        <div class="form-field">
+            <label id="auth-identity-label" for="auth-email">البريد الإلكتروني أو اسم المستخدم</label>
+            <input id="auth-email" name="email" type="text" dir="ltr" autocomplete="username" required>
+        </div>
+        <div class="form-field">
+            <label for="auth-password">كلمة المرور</label>
+            <input id="auth-password" name="password" type="password" autocomplete="current-password" required minlength="6">
+        </div>
+        <button type="submit" id="auth-submit" class="suggest-button">دخول</button>
+    </form>
+    <p id="auth-message" role="status" aria-live="polite"></p>
+    <p class="auth-hint">أنشئ حسابك بالبريد وكلمة المرور للدخول مباشرة.</p>
+</dialog>
+
+<section class="hero" dir="rtl" aria-labelledby="hero-title">
+    <div class="hero-content">
+        <p class="hero-label">خطوتك الأولى تبدأ هنا</p>
+
+        <h1 id="hero-title">
+            مهاراتك تستحق
+            <span>مشروعًا يُنجز.</span>
+        </h1>
+
+        <p class="hero-description">
+            اختر فكرة تناسب تخصصك، ابنِ خطة واضحة، وطوّر مشروعك.
+            <br>
+            مساحة واحدة لتحويل البداية إلى تقدم ملموس.
+        </p>
+
+        <div class="account-actions hero-login">
+            <span id="account-name" aria-live="polite">جارٍ التحقق من الجلسة…</span>
+            <button type="button" id="open-auth" disabled>تسجيل الدخول <span aria-hidden="true" class="login-spark">✦</span></button>
+            <a id="open-admin-panel" href="admin.html" hidden>فتح لوحة الإدارة ↗</a>
+            <button type="button" id="sign-out" hidden>تسجيل الخروج</button>
+        </div>
+        <ol class="hero-steps">
+            <li>فكرة مناسبة</li>
+            <li>خطوات واضحة</li>
+            <li>تقدم محفوظ</li>
+        </ol>
+    </div>
+
+    <div class="hero-art" aria-hidden="true">
+        <div class="hero-orbit">
+            <span class="hero-star">✦</span>
+            <span class="hero-caption">IDEA → BUILD</span>
+        </div>
+
+        <span class="hero-tag hero-tag-idea">✧ فكرة</span>
+        <span class="hero-tag hero-tag-code">{ } تطوير</span>
+        <span class="hero-tag hero-tag-done"> إنجاز</span>
+    </div>
+</section>
+
+
+
+    <nav class="project-tabs">
+        <!-- أسماء التبويبات: غيّر النص بين وسمي الزر -->
+        <button type="button" class="active">اختر مشروعي</button>
+        <button type="button">طور مشروعي</button>
+        <button type="button">مساحة مشروعي</button>
+    </nav>
+
+    <section class="project-panel" dir="rtl">
+        <header class="panel-header">
+            <div>
+                <!-- العبارة الصغيرة فوق العنوان -->
+                <p class="step-label">المسار الأول</p>
+
+                <!-- العنوان الرئيسي للبطاقة -->
+                <h2>لنجد فكرة تناسب بدايتك</h2>
+
+                <!-- الوصف الموجود تحت العنوان -->
+                <p>أخبرنا بما تعرفه وما تريد تحقيقه.</p>
+            </div>
+
+            <!-- نص زر تعبئة بيانات تجريبية -->
+            <button type="button" id="demo-data">
+                تجربة بيانات جاهزة ↙
+            </button>
+        </header>
+
+        <form id="idea-form">
+            <div class="form-grid progressive-form">
+                <div class="form-field" id="specialty-field">
+                    <label for="specialty">التخصص الأساسي</label>
+                    <select id="specialty" required aria-describedby="specialty-status"><option value="">اختر التخصص الأساسي</option></select>
+                    <p id="specialty-status" class="field-hint" role="status" aria-live="polite"></p>
+                </div>
+                <div id="subspecialty-field" class="form-field subspecialty-field" hidden>
+                    <label for="subspecialty">التخصص الفرعي</label>
+                    <select id="subspecialty" disabled required><option value="">اختر التخصص الفرعي</option></select>
+                </div>
+                <div class="form-field" id="skills-field" hidden>
+                    <label for="skills">مهاراتك</label>
+                    <input type="text" id="skills" name="skills" placeholder="مثال: JavaScript، تصميم واجهات، Python" required disabled>
+                </div>
+                <div class="form-field" id="goal-field" hidden>
+                    <label for="goal">هدف المشروع</label>
+                    <select id="goal" name="goal" required disabled>
+                        <option value="">اختر هدف المشروع</option>
+                        <option value="project">مشروع</option>
+                        <option value="graduation">مشروع تخرج</option>
+                        <option value="development">مشروع تطويري — لتعزيز السيرة الذاتية</option>
+                    </select>
+                </div>
+                <div class="form-field" id="duration-field" hidden>
+                    <label for="time">الوقت المتاح</label>
+                    <div class="duration-combined" role="group" aria-label="الوقت المتاح ووحدة المدة">
+                        <input id="time" name="time" type="number" inputmode="numeric" min="1" max="120" step="1" value="4" required disabled>
+                        <select id="time-unit" aria-label="وحدة المدة" disabled><option value="weeks">أسبوع</option><option value="months">شهر</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- نص زر إرسال النموذج -->
+            <button type="submit" class="suggest-button" id="idea-submit" hidden disabled>
+                اقترح لي ثلاث أفكار ←
+            </button>
+        </form>
+
+        <p id="ai-ideas-status" role="status"></p><div id="idea-results" class="results-box" hidden aria-live="polite">
+
+             <article class="idea-card">
+        <p class="step-label">فكرة 01 • 4 أسابيع</p>
+
+        <h3>منظم طلبات التوظيف</h3>
+
+        <p>
+            تابع طلبات التوظيف ومواعيد المقابلات في مكان واحد.
+        </p>
+
+        <p>
+            <strong>لماذا تناسبك؟</strong>
+            تتدرب فيها على بناء واجهة وإضافة البيانات وعرضها.
+        </p>
+
+        <p>
+            نسخة أولى: إضافة الطلبات، وتغيير حالتها، وحفظها محليًا.
+        </p>
+
+        <button
+            type="button"
+            class="choose-idea"
+            data-idea="job-tracker"
+        >
+            اختيار هذه الفكرة ←
+        </button>
+    </article>
+     
+     <article class="idea-card">
+    <p class="step-label">فكرة 02 • 4 أسابيع</p>
+
+    <h3>مخطط تعلم شخصي</h3>
+
+    <p>
+        قسّم هدف التعلم إلى خطوات صغيرة، وتابع إنجازها في مكان واحد.
+    </p>
+
+    <p>
+        <strong>لماذا تناسبك؟</strong>
+        تتدرب فيها على تنظيم البيانات وبناء واجهة تفاعلية.
+    </p>
+
+    <p>
+        نسخة أولى: إضافة أهداف ومهام، وتحديد المكتمل، وحفظ التقدم محليًا.
+    </p>
+
+    <button
+        type="button"
+        class="choose-idea"
+        data-idea="learning-planner"
+    >
+        اختيار هذه الفكرة ←
+    </button>
+</article>
+
+<article class="idea-card">
+    <p class="step-label">فكرة 03 • 4 أسابيع</p>
+
+    <h3>دليل مبادرات مجتمعية</h3>
+
+    <p>
+        اجمع فرص التطوع والمبادرات، وسهّل البحث بينها وتصنيفها.
+    </p>
+
+    <p>
+        <strong>لماذا تناسبك؟</strong>
+        تتدرب فيها على عرض البطاقات والبحث وتصفية النتائج.
+    </p>
+
+    <p>
+        نسخة أولى: إضافة مبادرات، والبحث والتصفية، وحفظ البيانات محليًا.
+    </p>
+
+    <button
+        type="button"
+        class="choose-idea"
+        data-idea="community-guide"
+    >
+        اختيار هذه الفكرة ←
+    </button>
+</article>
+
+</div>
+
+    </section>
+
+<section class="project-panel" dir="rtl" hidden>
+    <header class="panel-header">
+        <div>
+            <p class="step-label">المسار الثاني</p>
+            <h2>خطوة أفضل لمشروعك</h2>
+            <p>
+                شارك وصف مشروعك أو مسودته أو كوده، وحدد ما تريد تطويره في البرمجة أو الطب أو الهندسة.
+            </p>
+        </div>
+
+        <button type="button" id="demo-code">
+            مثال جاهز ↗
+        </button>
+    </header>
+
+    <div class="form-field">
+        <label for="code-snippet">محتوى المشروع</label>
+        <textarea
+            id="code-snippet"
+            name="code-snippet"
+            dir="auto"
+            rows="10"
+            placeholder="اكتب وصف المشروع أو مسودته أو الصق الكود الذي تريد تطويره."
+        ></textarea>
+    </div>
+
+    <div class="form-field">
+        <label for="code-request">وش تبي تضيف أو تعدّل؟</label>
+        <textarea
+            id="code-request"
+            name="code-request"
+            rows="3"
+            placeholder="مثال: أريد تحسين الفكرة وتنظيم مراحل التنفيذ وتحديد نقاط الضعف."
+        ></textarea>
+    </div>
+
+    <div class="code-actions">
+        <div class="form-field">
+            <p class="ai-privacy">ترسل هذه المراجعة المحتوى والطلب إلى خدمة ذكاء اصطناعي خارجية. أزل الأسرار والبيانات الشخصية وبيانات المرضى قبل الإرسال.</p><label for="code-file">تحميل ملف نصي</label>
+            <input
+                type="file"
+                id="code-file"
+                accept=".js,.ts,.jsx,.tsx,.html,.css,.py,.java,.c,.cpp,.cs,.php,.json,.txt,.md,.csv"
+            >
+        </div>
+
+        <button
+            type="button"
+            id="analyze-code"
+            class="suggest-button"
+        >
+            طوّر مشروعي ←
+        </button>
+    </div>
+
+    <details class="analysis-rules">
+        <summary>القواعد وحدود التحليل</summary>
+        <ul>
+            <li>تطوير الأفكار والمسودات والمشاريع والأكواد في تخصصك، من ملف نصي.</li>
+            <li>المراجعة تعليمية؛ لا تشخّص مرضى ولا تعتمد سلامة تصميم هندسي، وتحتاج مراجعة مختص قبل التطبيق.</li>
+            <li>الحد الأقصى لحجم الملف: واحد ميجابايت. تُراجع الملفات الطويلة على أجزاء مع إظهار التقدم، وقد تستغرق دقائق.</li>
+        </ul>
+    </details>
+
+    <div
+        id="code-results"
+        class="results-box"
+        hidden
+        aria-live="polite"
+    ></div>
+    <button type="button" id="cancel-review" hidden>إيقاف المراجعة</button><progress id="review-progress" value="0" max="1" aria-label="تقدم مراجعة الملف" hidden></progress>
+    <p id="report-save-status" role="status" aria-live="polite"></p>
+    <button type="button" id="finish-development" hidden>تم الانتهاء</button><button type="button" id="save-report" hidden>حفظ التقرير في حسابي</button>
+</section>
+
+
+<section class="project-panel" dir="rtl" hidden>
+    <header class="panel-header">
+        <div>
+            <p class="step-label">من الفكرة إلى التنفيذ</p>
+            <h2>مساحة مشروعي</h2>
+            <p>فكرتك وخطة تنفيذها وتقارير التطوير.</p>
+        </div>
+    </header>
+
+    <p id="workspace-status" role="status" aria-live="polite"></p>
+    <button type="button" id="reload-workspace" hidden>إعادة تحميل بياناتي</button>
+    <div class="form-field" id="saved-projects-field" hidden>
+        <label for="saved-projects">مشاريعي المحفوظة</label>
+        <select id="saved-projects"></select>
+    </div>
+    <details id="project-history" class="workspace-history"><summary>مشاريعي</summary><div id="project-history-list"></div></details><details id="development-history" class="workspace-history"><summary>تطويراتي</summary>
+
+    <p id="workspace-no-reports">
+        سجّل الدخول لاستعادة تقاريرك المحفوظة.
+    </p>
+
+    <div id="workspace-reports"></div>
+    <button type="button" id="more-reports" hidden>عرض تقارير أقدم</button></details>
+
+    <section id="workspace-active-developments" hidden aria-label="تقارير تطوير قيد المراجعة"><h3>تقارير تطوير قيد المراجعة</h3><div id="active-development-list"></div></section>
+    <div id="workspace-empty">
+        <p>
+            اختر فكرة من «اختر مشروعي» لتظهر هنا خطة البداية.
+        </p>
+    </div>
+
+    <article id="workspace-project" hidden>
+        <p class="step-label">مشروعك المختار</p>
+        <h3 id="workspace-title"></h3>
+        <p id="workspace-description"></p>
+
+        <h3>خطة البداية</h3><div class="project-plan-actions"><button type="button" id="ai-plan-create">تجهيز خطوات المشروع</button><button type="button" id="ai-plan-restore" hidden>استعادة الخطوات</button><button type="button" id="ai-plan-pdf" hidden>حفظ PDF</button><p id="ai-plan-status" role="status"></p><div id="ai-plan-output" hidden></div></div>
+
+        <progress
+            id="workspace-progress"
+            value="0"
+            max="5"
+            aria-label="تقدم تنفيذ المشروع"
+        ></progress>
+
+        <p id="workspace-progress-text">0 من 5 خطوات مكتملة</p>
+
+        <div id="workspace-tasks"></div><button type="button" id="finish-project" disabled>إنهاء المشروع</button>
+    </article>
+
+
+</section>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.78.0/dist/umd/supabase.js"></script>
+    <script defer src="supabase-config.js"></script>
+    <script defer src="specialties.js"></script><script defer src="specialty-selector.js"></script>
+    <script defer src="ps.js"></script><script defer src="review-chunks.js"></script><script defer src="ai-client.js"></script>
+</body>
+</html>
+
