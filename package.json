@@ -1,0 +1,19 @@
+{
+  "name": "ideaforge-ai",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/build-cloudflare.mjs",
+    "test": "node --test tests/*.test.cjs tests/cloudflare*.test.mjs",
+    "check": "tsc --noEmit -p tsconfig.json",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "wrangler": "^4.157.0"
+  }
+}

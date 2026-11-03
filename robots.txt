@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /activate.html
+Disallow: /api/
+Sitemap: https://ideaforgeai.xyz/sitemap.xml
