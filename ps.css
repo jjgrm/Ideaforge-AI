@@ -259,8 +259,9 @@ box-sizing: border-box;
     border: none;
     padding: 0;
     display: grid;
-grid-template-columns: repeat(3, minmax(0, 1fr));
-gap: 16px;
+    grid-template-columns: minmax(0, 760px);
+    justify-content: center;
+    gap: 16px;
 }
 
 .idea-card {
@@ -299,10 +300,19 @@ gap: 16px;
     display: flex;
     flex-direction: column;
     min-width: 0;
+    box-sizing: border-box;
+    width: 100%;
+    overflow-wrap: anywhere;
 }
+
+.idea-card[hidden] { display: none; }
 
 .choose-idea {
     margin-top: auto;
+    box-sizing: border-box;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
 }
 
 #code-results {
