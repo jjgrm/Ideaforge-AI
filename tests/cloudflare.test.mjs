@@ -8,7 +8,7 @@ const req = (kind = 'review', payload = { code: 'return a-b;', specialty: 'progr
   method: 'POST', headers: { origin: 'https://ideaforgeai.xyz', 'content-type': 'application/json', authorization: 'Bearer user-session', ...extra }, body: JSON.stringify({ kind, payload })
 });
 const answer = kind => kind === 'review' ? { summary: 'Review', issues: ['Wrong operator'], correctedCode: 'return a+b;', tests: ['Check addition'], limitations: 'Not executed' } :
-  kind === 'ideas' ? { ideas: Array.from({ length: 3 }, (_, i) => ({ title: 'Idea ' + i, description: 'Details', reason: 'Fits', stack: ['Tool'], firstSteps: ['Begin'] })) } :
+  kind === 'ideas' ? { ideas: Array.from({ length: 1 }, (_, i) => ({ title: 'Idea ' + i, description: 'Details', reason: 'Fits', stack: ['Tool'], firstSteps: ['Begin'] })) } :
   { title: 'Plan', summary: 'Summary', tools: [{ name: 'Tool', url: 'https://example.com', setup: 'Install' }], languages: ['Knowledge'], files: ['README'], phases: Array.from({ length: 5 }, () => ({ title: 'Phase', steps: ['Step'], deliverable: 'Output', test: 'Check' })), launchChecklist: ['Ready'], nextLearning: ['Next'] };
 const provider = data => Response.json({ status: 'completed', output: [{ type: 'reasoning', summary: [{ text: 'Not for display' }] }, { type: 'message', content: [{ type: 'output_text', text: JSON.stringify(data) }] }] });
 function limits(settings = {}) {
@@ -97,6 +97,17 @@ test('unavailable idea history prevents generation', async () => {
   const r = await handleAI(req('ideas', { specialty: 'programming', subspecialty: '061301' }), a.env, a.fetcher);
   assert.equal((await r.json()).error, 'ideas_history_unavailable');
   assert.equal(a.calls.filter(c => c.url.startsWith('https://api.openai.com')).length, 0);
+});
+test('ideas schema requests one idea and server rejects zero or multiple ideas', async () => {
+  assert.equal(schemas.ideas.properties.ideas.minItems, 1);
+  assert.equal(schemas.ideas.properties.ideas.maxItems, 1);
+  for (const count of [0, 2, 3]) {
+    const data = { ideas: Array.from({ length: count }, (_, i) => ({ ...answer('ideas').ideas[0], title: 'Unique title ' + i })) };
+    const a = setup({ response: () => provider(data) });
+    const response = await handleAI(req('ideas', { specialty: 'programming', subspecialty: '061301' }), a.env, a.fetcher);
+    assert.equal(response.status, 502);
+    assert.equal(a.calls.some(c => c.url.includes('if_ai_claim_ideas')), false);
+  }
 });
 test('permission, billing and overload errors are sanitized and not silently retried', async () => {
   for (const [status, code, expected] of [[401, '', 'provider_key_rejected'], [429, 'insufficient_quota', 'provider_billing_required'], [429, 'rate_limit_exceeded', 'provider_limit'], [503, '', 'provider_busy']]) {
