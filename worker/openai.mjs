@@ -9,7 +9,7 @@ const strings = { type: 'array', items: string };
 const object = properties => ({ type: 'object', properties, required: Object.keys(properties), additionalProperties: false });
 const list = items => ({ type: 'array', items });
 export const schemas = {
-  ideas: object({ ideas: list(object({ title: string, description: string, reason: string, stack: strings, firstSteps: strings })) }),
+  ideas: object({ ideas: { ...list(object({ title: string, description: string, reason: string, stack: strings, firstSteps: strings })), minItems: 1, maxItems: 1 } }),
   review: object({ summary: string, issues: strings, correctedCode: string, tests: strings, limitations: string }),
   plan: object({ title: string, summary: string, tools: list(object({ name: string, url: string, setup: string })), languages: strings,
     files: strings, phases: list(object({ title: string, steps: strings, deliverable: string, test: string })), launchChecklist: strings, nextLearning: strings })
@@ -121,7 +121,7 @@ export async function handleAI(request, env, fetcher = fetch) {
       const raw = content.filter(item => item.type === 'output_text').map(item => item.text || '').join('');
       let data; try { data = JSON.parse(raw); } catch { return json({ error: 'invalid_response' }, 502); }
       if (!matches(schemas[kind], data) || new TextEncoder().encode(raw).length > 180000) return json({ error: 'invalid_response' }, 502);
-      if (kind === 'ideas' && (data.ideas.length !== 3 || new Set(data.ideas.map(x => x.title.trim().toLowerCase())).size !== 3 || data.ideas.some(x => !x.title.trim() || x.title.length > 120))) return json({ error: 'invalid_response' }, 502);
+      if (kind === 'ideas' && (data.ideas.length !== 1 || data.ideas.some(x => x.title.trim().length < 5 || x.title.length > 120))) return json({ error: 'invalid_response' }, 502);
       if (kind === 'plan' && (data.phases.length !== 5 || data.phases.some(x => !x.steps.length))) return json({ error: 'invalid_response' }, 502);
       if (kind === 'ideas') {
         const claim = await history('if_ai_claim_ideas', { p_ideas: data.ideas });
